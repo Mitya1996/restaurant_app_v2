@@ -17,9 +17,8 @@ db = firestore.client()
 
 @app.route('/')
 def home():
-    doc_ref = db.collection('restaurant').document('menu')
+    doc = db.collection('restaurant').document('menu').get()
 
-    doc = doc_ref.get()
     if doc.exists:
         menu = doc.to_dict()['text']
     else:
