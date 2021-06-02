@@ -1,0 +1,41 @@
+<ul class="nav-ul">
+    {# if user in session #}
+    <li class="nav-li"><a href="/" class="nav-a"><img src="https://storage.googleapis.com/restaurant-app-314718-public/assets/logo3.png" alt="company-logo" height="50px" width="50px"></a></li>
+    {# else #}
+    <!-- same but routes to /edit -->
+    {# endif #}
+    <li class="nav-li"><a href="https://wa.me/573125834785" class="nav-a"><img src="https://storage.googleapis.com/restaurant-app-314718-public/assets/wa-logo2.png" alt="whatsapp-link" width="50px"></a></li>
+    {% if '_user_id' not in session %}
+    <li class="nav-li" style="margin-left:auto;"><a href="/admin" class="nav-a"><div width="80px" height="80px"></div></a></li>
+    {% else %}
+    <li class="nav-li" style="margin-left:auto;"><a href="/edit" class="nav-a"><div width="80px" height="80px"></div></a></li>
+    {% endif %}
+</ul>
+
+
+<style>
+.nav-ul {
+  list-style-type: none;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  border: 1px solid #e7e7e7;
+  background-color: #f3f3f3;
+  display: flex;
+  align-items: center;
+}
+
+.nav-li {
+  float: left;
+}
+
+.nav-li .nav-a {
+  display: block;
+  color: #666;
+  text-align: center;
+  padding: 14px 16px;
+  text-decoration: none;
+}
+
+
+</style>
