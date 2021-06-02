@@ -1,10 +1,18 @@
+import os
+
+from flask import Flask, render_template, request, redirect
+
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import firestore
 
-from flask import Flask, request, redirect
-from flask.templating import render_template
+from google.cloud import storage
+
+
 app = Flask(__name__)
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev')
+CLOUD_STORAGE_BUCKET = os.environ['CLOUD_STORAGE_BUCKET']
+
 
 # Use the application default credentials
 cred = credentials.ApplicationDefault()
@@ -37,3 +45,4 @@ def update():
     db.collection('restaurant').document('menu').set(updated_menu)
 
     return redirect('/')
+
