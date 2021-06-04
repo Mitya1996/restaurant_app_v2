@@ -6,7 +6,7 @@
 
 {% include 'flash-alerts.html' %}
 
-<form action="/admin" method="POST" class="container my-3">
+<form action="/login" method="POST" class="container my-3">
     {{ form.hidden_tag() }} <!--add type=hidden form fields -->
     {% for field in form if field.widget.input_type != 'hidden' %}
     <div class="mb-3">
