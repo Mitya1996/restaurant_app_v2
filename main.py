@@ -22,7 +22,7 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev')
 GOOGLE_STORAGE_BUCKET = os.environ.get('GOOGLE_STORAGE_BUCKET', 'restaurant-app-314718-public')
 
-client = storage.Client()
+client = storage.Client(credentials=credentials)
 
 #variable for /images route
 UPLOAD_FOLDER = './user-uploads'
