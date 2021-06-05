@@ -139,6 +139,12 @@ def delete(bucket_name, blob_name):
     return redirect('/images')
 
 
+@app.route('/settings')
+@login_required
+def settings():
+    return render_template('settings.html')
+
+
 @app.route('/register', methods=['GET', 'POST'])
 @login_required
 def register():
