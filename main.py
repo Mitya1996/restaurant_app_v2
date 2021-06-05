@@ -12,7 +12,7 @@ from google.cloud import storage
 
 from gcs_credentials import credentials
 
-from gcs_read_images import image_urls
+from gcs_functions import image_urls, delete_blob
 
 import uuid #for uploading images, random name
 
@@ -102,7 +102,7 @@ def edit():
 @app.route('/images', methods=['GET', 'POST'])
 @login_required
 def images():
-    user_image_urls = image_urls(GOOGLE_STORAGE_BUCKET, 'user-images/img')
+    blobs = client.list_blobs(GOOGLE_STORAGE_BUCKET, prefix='user-images/img')
 
     add_image_form = AddImageForm()
     if add_image_form.validate_on_submit():
@@ -129,7 +129,14 @@ def images():
             return redirect('/images')
 
 
-    return render_template('images.html', user_image_urls=user_image_urls, add_image_form=add_image_form)
+    return render_template('images.html', blobs=blobs, add_image_form=add_image_form)
+
+
+@app.route('/<bucket_name>/user-images/<blob_name>/delete')
+@login_required
+def delete(bucket_name, blob_name):
+    delete_blob(bucket_name, f'user-images/{blob_name}')
+    return redirect('/images')
 
 
 @app.route('/register', methods=['GET', 'POST'])

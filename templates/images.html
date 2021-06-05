@@ -31,9 +31,9 @@
 
     <!-- one image per row on mobile, three images on desktop, two on medium -->
     <div class="row">
-        {% for url in user_image_urls %}
+        {% for blob in blobs %}
         <div class="col-12 col-md-4 d-flex align-items-center my-1">
-            <img src="{{url}}" loading="lazy" width="100%">
+            <a href="/{{blob.bucket.name}}/{{blob.name}}/delete"><img src="https://storage.googleapis.com/{{blob.bucket.name}}/{{blob.name}}" loading="lazy" width="100%"></a>
         </div>
         {% endfor %}
     </div>
