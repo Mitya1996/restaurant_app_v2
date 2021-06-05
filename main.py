@@ -1,4 +1,6 @@
 import os
+import datetime
+import requests
 
 from flask import Flask, render_template, request, redirect, flash
 from flask_login import LoginManager, login_user, login_required
@@ -6,15 +8,24 @@ from flask_login import LoginManager, login_user, login_required
 from database import db
 from models import User
 
+from google.cloud import storage
 from gcs_read_images import image_urls
 
-from forms import LoginForm, ChangeMenuForm, NewUserForm
+import uuid #for uploading images, random name
+
+from forms import LoginForm, ChangeMenuForm, NewUserForm, AddImageForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev')
 GOOGLE_STORAGE_BUCKET = os.environ.get('GOOGLE_STORAGE_BUCKET', 'restaurant-app-314718-public')
 
+client = storage.Client()
 
+#variable for /images route
+UPLOAD_FOLDER = './user-uploads'
+app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
+
+#flask-login stuff 
 login_manager = LoginManager()
 login_manager.init_app(app)
 
@@ -84,6 +95,35 @@ def edit():
 
     return render_template('edit.html', menu_form=menu_form)
 
+
+@app.route('/images', methods=['GET', 'POST'])
+def images():
+    user_image_urls = image_urls(GOOGLE_STORAGE_BUCKET, 'user-images/img')
+
+    add_image_form = AddImageForm()
+    if add_image_form.validate_on_submit():
+        if add_image_form.photo_file.data:
+            f = request.files['photo_file']
+            import re
+            extension = re.findall("(jpg|jpeg|png|gif|bmp)", f.filename)[0]
+            filename = f'str-{uuid.uuid4()}.{extension}'
+            f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+            photo_url = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+            
+            policy = client.generate_signed_post_policy_v4(
+                GOOGLE_STORAGE_BUCKET,
+                filename,
+                expiration=datetime.timedelta(minutes=10),
+                conditions=[
+                    ["content-length-range", 0, 1000000]
+                ],
+            )
+            with open(photo_url, "rb") as f:
+                files = {"file": (photo_url, f)}
+                requests.post(policy["url"], data=policy["fields"], files=files)
+
+
+    return render_template('images.html', user_image_urls=user_image_urls, add_image_form=add_image_form)
 
 
 @app.route('/register', methods=['GET', 'POST'])

@@ -1,0 +1,43 @@
+{% extends 'base.html' %}
+
+{% block title %}Sabores De Mi Tierra{% endblock %}
+
+
+{% block content %}
+
+{% include 'flash-alerts.html' %}
+
+<div class="container my-3">
+
+    <form action="/images" method="POST" enctype="multipart/form-data">
+        {{ add_image_form.hidden_tag() }} <!--add type=hidden form fields -->
+        {% for field in add_image_form if field.widget.input_type != 'hidden' %}
+        <div class="mb-3">
+            {{field.label(class_="form-label")}}
+            {{field(class_="form-control")}}
+
+            {% for err in field.errors %}
+            <small class="form-text text-danger d-block">{{err}}</small>
+            {% endfor %}
+
+        </div>
+        {% endfor %}
+        <button class="btn btn-primary">Subir</button>
+    </form>
+
+
+
+    <h4 style="text-align: center;" class="my-3">Toca un imágen para eliminárlo</h4>
+
+    <!-- one image per row on mobile, three images on desktop, two on medium -->
+    <div class="row">
+        {% for url in user_image_urls %}
+        <div class="col-12 col-md-4 d-flex align-items-center my-1">
+            <img src="{{url}}" loading="lazy" width="100%">
+        </div>
+        {% endfor %}
+    </div>
+
+</div>
+
+{% endblock %}
