@@ -65,3 +65,54 @@ class User(UserMixin):
             return user
         else:
             return False
+
+
+class Restaurant():
+    """Restaurant."""
+
+    @staticmethod
+    def get_menu():
+        doc = db.collection('restaurant').document('menu').get()
+
+        if doc.exists:
+            menu = doc.to_dict()['text']
+        else:
+            menu = ''
+
+        return menu
+
+
+    @staticmethod
+    def set_menu(user_input):
+
+        updated_menu = {
+            'text' : user_input
+        }
+        db.collection('restaurant').document('menu').set(updated_menu)
+
+
+    @staticmethod
+    def get_whatsapp_phone():
+        doc = db.collection('restaurant').document('settings').get()
+
+
+        if doc.exists:
+            whatsapp_phone = doc.to_dict()['whatsapp_phone']
+        else:
+            whatsapp_phone = ''
+
+        return whatsapp_phone
+
+    @staticmethod
+    def set_whatsapp_phone(whatsapp_phone):
+
+        settings_ref = db.collection('restaurant').document('settings')
+        settings_ref.update({'whatsapp_phone': whatsapp_phone})
+
+    @property
+    def whatsapp_phone(cls):
+        return cls.get_whatsapp_phone()
+
+    @property
+    def menu(cls):
+        return cls.get_menu()

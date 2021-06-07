@@ -30,7 +30,7 @@ class NewUserForm(FlaskForm):
 class ChangeMenuForm(FlaskForm):
     """Form for menu."""
     menu = TextAreaField("Menu",
-        validators=[InputRequired(), Length(max=200)])
+        validators=[InputRequired(), Length(max=200, message='Maximo de 200 carácteres')])
 
 
 class AddImageForm(FlaskForm):
@@ -38,3 +38,9 @@ class AddImageForm(FlaskForm):
 
     photo_file = FileField("Añadir imagen",
         validators=[InputRequired(), FileAllowed(['jpg', 'jpeg', 'png', 'gif', 'bmp'], 'Formato de imagen esta invalido.')])
+
+
+class WhatsappPhoneForm(FlaskForm):
+    """Form for whatsapp #."""
+    whatsapp_phone = StringField("Numero de WhatsApp",
+        validators=[InputRequired(), Length(min=10, max=14, message='Entra un numero entre 10 y 14 numeros')])

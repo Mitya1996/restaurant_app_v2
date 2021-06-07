@@ -13,8 +13,8 @@
             <form action="/edit" method="POST" id="buffet-form">
                 {{ menu_form.hidden_tag() }} <!--add type=hidden form fields -->
                 {{ menu_form.menu(class_="buffet-textarea", rows=10) }}
-                {% for err in menu_form.errors %}
-                <small class="form-text text-danger d-block">{{ err }}</small>
+                {% for err in menu_form.menu.errors %}
+                <small class="d-block">{{ err }}</small>
                 {% endfor %}
                 <button class="btn btn-primary mt-2">Actualizar Menu</button>
             </form>

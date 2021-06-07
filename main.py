@@ -6,7 +6,7 @@ from flask import Flask, render_template, request, redirect, flash
 from flask_login import LoginManager, login_user, login_required
 
 from database import db
-from models import User
+from models import User, Restaurant
 
 from google.cloud import storage
 
@@ -16,7 +16,7 @@ from gcs_functions import image_urls, delete_blob
 
 import uuid #for uploading images, random name
 
-from forms import LoginForm, ChangeMenuForm, NewUserForm, AddImageForm
+from forms import LoginForm, ChangeMenuForm, NewUserForm, AddImageForm, WhatsappPhoneForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev')
@@ -39,15 +39,12 @@ def load_user(username):
 
 @app.route('/')
 def home():
-    doc = db.collection('restaurant').document('menu').get()
+    menu = Restaurant.get_menu()
+    whatsapp_phone = Restaurant.get_whatsapp_phone()
 
-    if doc.exists:
-        menu = doc.to_dict()['text']
-    else:
-        menu = ''
 
     user_image_urls = image_urls(GOOGLE_STORAGE_BUCKET, 'user-images/img')
-    return render_template('index.html', menu=menu, user_image_urls=user_image_urls)
+    return render_template('index.html', menu=menu, user_image_urls=user_image_urls, whatsapp_phone=whatsapp_phone)
 
 
 
@@ -77,23 +74,16 @@ def login():
 @app.route('/edit', methods=['GET', 'POST'])
 @login_required
 def edit():
-    doc = db.collection('restaurant').document('menu').get()
+    menu = Restaurant.get_menu()
 
-    if doc.exists:
-        menu = doc.to_dict()['text']
-    else:
-        menu = ''
-    menu_form = ChangeMenuForm()
-    menu_form.menu.data = menu
+    menu_form = ChangeMenuForm(obj=Restaurant())
 
     if menu_form.validate_on_submit():
-        user_input = request.form['menu']
 
-        updated_menu = {
-            'text' : user_input
-        }
-        db.collection('restaurant').document('menu').set(updated_menu)
+        user_input = request.form['menu']
+        Restaurant.set_menu(user_input)
         flash('menu edited successfully')
+        
         return redirect('/edit')
 
     return render_template('edit.html', menu_form=menu_form)
@@ -102,6 +92,7 @@ def edit():
 @app.route('/images', methods=['GET', 'POST'])
 @login_required
 def images():
+    #used prefix of img because there is always one hidden blob in buckets, not sure why
     blobs = client.list_blobs(GOOGLE_STORAGE_BUCKET, prefix='user-images/img')
 
     add_image_form = AddImageForm()
@@ -142,7 +133,27 @@ def delete(bucket_name, blob_name):
 @app.route('/settings')
 @login_required
 def settings():
-    return render_template('settings.html')
+    whatsapp_phone = Restaurant.get_whatsapp_phone()
+    return render_template('settings.html', whatsapp_phone=whatsapp_phone)
+
+
+@app.route('/edit-whatsapp-number', methods=['GET', 'POST'])
+@login_required
+def edit_wa_num():
+    whatsapp_phone = Restaurant.get_whatsapp_phone()
+
+    #obj parameter is used to prepopulate values in form
+    #in this case Restaurant() object has property whatsapp_phone to pull value from
+    form = WhatsappPhoneForm(obj=Restaurant())
+
+    if form.validate_on_submit():
+        updated_whatsapp_phone = form.whatsapp_phone.data
+        Restaurant.set_whatsapp_phone(updated_whatsapp_phone)
+        flash('Numero de WhatsApp actualizado')
+        return redirect('/settings')
+
+    return render_template('edit-wa-num.html', form=form, whatsapp_phone=whatsapp_phone)
+
 
 
 @app.route('/register', methods=['GET', 'POST'])
