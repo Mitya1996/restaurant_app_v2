@@ -1,4 +1,5 @@
 from database import db
+import datetime
 
 from flask_login import UserMixin
 
@@ -10,38 +11,53 @@ bcrypt = Bcrypt()
 class User(UserMixin):
     """User."""
 
-    def __init__(self, username, password, email, isAdmin=False, isDeletable=True):
+    def __init__(self, username, password, email, is_admin=False, isDeletable=True):
         self.username = username
         self.id = username #for flask-login to work
         self.password = password
         self.email = email
-        self.isAdmin = isAdmin 
+        self.is_admin = is_admin 
         self.isDeletable = isDeletable
 
     @staticmethod
     def from_dict(source):
-        return User(source['username'], source['password'], source['email'], source['isAdmin'], source['isDeletable'])
+        return User(source['username'], source['password'], source['email'], source['is_admin'], source['isDeletable'])
 
     def to_dict(self):
         return {
             'username' : self.username,
             'password' : self.password,
             'email' : self.email,
-            'isAdmin' : self.isAdmin,
+            'is_admin' : self.is_admin,
             'isDeletable' : self.isDeletable
         }
 
 
     @classmethod
-    def register(cls, username, password, email, isAdmin, isDeletable):
+    def register(cls, username, password, email, is_admin):
         """Register user w/hashed password & return user."""
 
         hashed = bcrypt.generate_password_hash(password)
         # turn bytestring into normal (unicode utf8) string
         hashed_utf8 = hashed.decode("utf8")
 
+        is_admin_bool = True if is_admin == "True" else False
+
+        new_user = cls(username=username, password=hashed_utf8, email=email, is_admin=is_admin_bool)
+
+        db.collection('users').document(username).set(new_user.to_dict())
+
         # return instance of user w/username and hashed pwd
-        return cls(username=username, password=hashed_utf8, email=email, isAdmin=isAdmin, isDeletable=isDeletable)
+        return new_user
+
+    @classmethod
+    def delete(cls, username):
+        user = cls.get(username)
+        if user.isDeletable:
+            db.collection('users').document(username).delete()
+            return True
+        else:
+            return False
 
 
     @staticmethod
@@ -51,6 +67,12 @@ class User(UserMixin):
             return User.from_dict(doc.to_dict())
         else:
             return None
+
+    @staticmethod
+    def get_all():
+        docs = db.collection('users').stream()
+        return [doc.to_dict() for doc in docs]
+
 
     @classmethod
     def authenticate(cls, username, password):
@@ -116,3 +138,15 @@ class Restaurant():
     @property
     def menu(cls):
         return cls.get_menu()
+
+    @property
+    def today(cls):
+        weekdays = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo']
+        months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Deciembre']
+        today = datetime.date.today()
+        weekday = weekdays[int(today.strftime('%w'))]
+        day = today.strftime('%-d')
+        month = months[int(today.strftime('%-m')) - 1]
+        year = today.strftime('%Y')
+        return f'Menu de hoy: {weekday} {day} de {month} {year}'
+

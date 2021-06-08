@@ -2,10 +2,9 @@ import os
 import datetime
 import requests
 
-from flask import Flask, render_template, request, redirect, flash
-from flask_login import LoginManager, login_user, login_required
+from flask import Flask, render_template, request, redirect, flash, session, abort
+from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
-from database import db
 from models import User, Restaurant
 
 from google.cloud import storage
@@ -16,7 +15,7 @@ from gcs_functions import image_urls, delete_blob
 
 import uuid #for uploading images, random name
 
-from forms import LoginForm, ChangeMenuForm, NewUserForm, AddImageForm, WhatsappPhoneForm
+from forms import LoginForm, ChangeMenuForm, NewUserForm, AddImageForm, WhatsappPhoneForm, ResetPasswordForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev')
@@ -36,21 +35,23 @@ login_manager.init_app(app)
 def load_user(username):
     return User.get(username)
 
+#puts restaurant variable in all templates so you can use restaurant.whatsapp_phone and restaurant.menu
+@app.context_processor
+def inject_user():
+    return dict(restaurant=Restaurant())
+
 
 @app.route('/')
 def home():
-    menu = Restaurant.get_menu()
-    whatsapp_phone = Restaurant.get_whatsapp_phone()
-
-
     user_image_urls = image_urls(GOOGLE_STORAGE_BUCKET, 'user-images/img')
-    return render_template('index.html', menu=menu, user_image_urls=user_image_urls, whatsapp_phone=whatsapp_phone)
-
+    return render_template('index.html', user_image_urls=user_image_urls)
 
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
-
+    if '_user_id' in session:
+        flash('Ya estas autenticado')
+        return redirect('/user')
     form = LoginForm()
     if form.validate_on_submit():
         # Login and validate the user.
@@ -58,24 +59,22 @@ def login():
         password = form.password.data
         user = User.authenticate(username, password)
         if not user:
-            flash("invalid credentials")
+            flash("Credenciales invalidos")
             return redirect('/login')
             
         # user should be an instance of your `User` class
         login_user(user)
 
-        flash('Logged in successfully.')
+        flash('Entraste la cuenta con exito')
 
-        return redirect('/edit')
+        return redirect('/dashboard')
 
     return render_template('login.html', form=form)
 
 
-@app.route('/edit', methods=['GET', 'POST'])
+@app.route('/dashboard', methods=['GET', 'POST'])
 @login_required
-def edit():
-    menu = Restaurant.get_menu()
-
+def user():
     menu_form = ChangeMenuForm(obj=Restaurant())
 
     if menu_form.validate_on_submit():
@@ -83,10 +82,10 @@ def edit():
         user_input = request.form['menu']
         Restaurant.set_menu(user_input)
         flash('menu edited successfully')
-        
-        return redirect('/edit')
 
-    return render_template('edit.html', menu_form=menu_form)
+        return redirect('/dashboard')
+
+    return render_template('dashboard.html', menu_form=menu_form)
 
 
 @app.route('/images', methods=['GET', 'POST'])
@@ -130,18 +129,9 @@ def delete(bucket_name, blob_name):
     return redirect('/images')
 
 
-@app.route('/settings')
-@login_required
-def settings():
-    whatsapp_phone = Restaurant.get_whatsapp_phone()
-    return render_template('settings.html', whatsapp_phone=whatsapp_phone)
-
-
 @app.route('/edit-whatsapp-number', methods=['GET', 'POST'])
 @login_required
 def edit_wa_num():
-    whatsapp_phone = Restaurant.get_whatsapp_phone()
-
     #obj parameter is used to prepopulate values in form
     #in this case Restaurant() object has property whatsapp_phone to pull value from
     form = WhatsappPhoneForm(obj=Restaurant())
@@ -152,18 +142,61 @@ def edit_wa_num():
         flash('Numero de WhatsApp actualizado')
         return redirect('/settings')
 
-    return render_template('edit-wa-num.html', form=form, whatsapp_phone=whatsapp_phone)
+    return render_template('edit-wa-num.html', form=form)
 
 
+@app.route('/users')
+@login_required
+def users():
+    if not current_user.is_admin:
+        flash('No esta permitido gestionar usuarios')
+        return redirect('/')
+    users = User.get_all()
+    return render_template('users.html', users=users)
 
-@app.route('/register', methods=['GET', 'POST'])
+@app.route('/users/create', methods=['GET', 'POST'])
 @login_required
 def register():
-    new_user_form = NewUserForm()
-    if new_user_form.validate_on_submit():
+    if not current_user.is_admin:
+        flash('No esta permitido crear usuarios')
+        return redirect('/')
+    form = NewUserForm()
+    if form.validate_on_submit():
+        username = form.username.data
+        password = form.password.data
+        email = form.email.data
+        is_admin = form.is_admin.data
+        User.register(username, password, email, is_admin)
+        flash('Usuario creado')
+        return redirect('/users')
+        
+    return render_template('create-user.html', form=form)
 
-        new_user = User.register(username, password, email, isAdmin)
 
-        db.collections('users').document(new_user.username).set(new_user.to_dict())
+@app.route('/<username>/delete')
+@login_required
+def delete_user(username):
+    #edge case if a user deletes themselves
+    if username == current_user.username:
+        flash('No se puede eliminar se mismo')
+        return redirect('/users')
+    #edge case if a user deletes themselves
+    if not current_user.is_admin:
+        flash('No esta permitido eliminar usuarios')
+        return redirect('/')
+    deleted = User.delete(username)
+    if deleted:
+        flash('Usuario eliminado')
+    return redirect('/users')
 
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash('Saliste de la cuenta')
+    return redirect('/')
 
+@app.route("/resetpassword", methods=['GET', 'POST'])
+def reset_password():
+    form = ResetPasswordForm()
+    return render_template('reset-password.html', form=form)

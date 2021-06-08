@@ -9,11 +9,13 @@
 
 {% block content %}
 
+{% include 'flash-alerts.html' %}
 
 <div class="bg-image">
 
     <div class="hero-text">
-        <div id="buffet" style="white-space: pre-wrap;">{{menu}}</div>
+        <h3 class="my-3 w-100" style="white-space: break-spaces;">{{restaurant.today}}</h3>
+        <div id="buffet" style="white-space: break-spaces;">{{restaurant.menu}}</div>
     </div>
 
 </div>

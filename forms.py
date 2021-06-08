@@ -23,7 +23,8 @@ class NewUserForm(FlaskForm):
         validators=[InputRequired()])
     email = StringField("Correo Electronico",
         validators=[InputRequired(), Email()])
-    isAdmin = RadioField("Administrador",
+    is_admin = RadioField("Administrador",
+        choices=[(True, 'Si'), (False, 'No')],
         validators=[InputRequired()])
 
 
@@ -44,3 +45,10 @@ class WhatsappPhoneForm(FlaskForm):
     """Form for whatsapp #."""
     whatsapp_phone = StringField("Numero de WhatsApp",
         validators=[InputRequired(), Length(min=10, max=14, message='Entra un numero entre 10 y 14 numeros')])
+
+
+class ResetPasswordForm(FlaskForm):
+    """Form for resetting password."""
+
+    email = StringField("Correo Electronico",
+        validators=[InputRequired(), Email()])

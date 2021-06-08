@@ -1,14 +1,10 @@
 <ul class="nav-ul">
     <li class="nav-li"><a href="/" class="nav-a"><img src="https://storage.googleapis.com/restaurant-app-314718-public/assets/logo3.png" alt="company-logo" height="50px" width="50px"></a></li>
-    <!-- same but routes to /edit -->
-    {# endif #}
+    <li class="nav-li"><a href="https://wa.me/{{restaurant.whatsapp_phone}}" class="nav-a"><img src="https://storage.googleapis.com/restaurant-app-314718-public/assets/wa-logo2.png" alt="whatsapp-link" width="50px"></a></li>
     {% if '_user_id' not in session %}
-    <li class="nav-li"><a href="https://wa.me/{{whatsapp_phone}}" class="nav-a"><img src="https://storage.googleapis.com/restaurant-app-314718-public/assets/wa-logo2.png" alt="whatsapp-link" width="50px"></a></li>
     <li class="nav-li" style="margin-left:auto;"><a href="/login" class="nav-a"><div width="80px" height="80px"></div></a></li>
     {% else %}
-    <li class="nav-li"><a href="/images" class="nav-a">Imágenes</a></li>
-    <li class="nav-li"><a href="/settings" class="nav-a">Configuración</a></li>
-    <li class="nav-li" style="margin-left:auto;"><a href="/edit" class="nav-a"><div width="80px" height="80px"></div></a></li>
+    <li class="nav-li" style="margin-left:auto;"><a href="/dashboard" class="nav-a">{{session['_user_id']}}</a></li>
     {% endif %}
 </ul>
 
