@@ -46,9 +46,3 @@ class WhatsappPhoneForm(FlaskForm):
     whatsapp_phone = StringField("Numero de WhatsApp",
         validators=[InputRequired(), Length(min=10, max=14, message='Entra un numero entre 10 y 14 numeros')])
 
-
-class ResetPasswordForm(FlaskForm):
-    """Form for resetting password."""
-
-    email = StringField("Correo Electronico",
-        validators=[InputRequired(), Email()])

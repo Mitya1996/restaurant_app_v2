@@ -15,7 +15,7 @@ from gcs_functions import image_urls, delete_blob
 
 import uuid #for uploading images, random name
 
-from forms import LoginForm, ChangeMenuForm, NewUserForm, AddImageForm, WhatsappPhoneForm, ResetPasswordForm
+from forms import LoginForm, ChangeMenuForm, NewUserForm, AddImageForm, WhatsappPhoneForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev')
