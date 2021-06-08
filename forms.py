@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, TextAreaField, RadioField
-from wtforms.validators import InputRequired, Length
+from wtforms.fields.core import IntegerField
+from wtforms.validators import InputRequired, Length, NumberRange
 from flask_wtf.file import FileField, FileAllowed
 
 
@@ -41,6 +42,6 @@ class AddImageForm(FlaskForm):
 
 class WhatsappPhoneForm(FlaskForm):
     """Form for whatsapp #."""
-    whatsapp_phone = StringField("Numero de WhatsApp",
-        validators=[InputRequired(), Length(min=10, max=14, message='Entra un numero entre 10 y 14 numeros')])
+    whatsapp_phone = IntegerField("Numero de WhatsApp",
+        validators=[InputRequired(), NumberRange(min=1000000000, max=99999999999999, message='Entra un numero entre 10 y 14 numeros')])
 
