@@ -65,7 +65,7 @@ def login():
         # user should be an instance of your `User` class
         login_user(user)
 
-        flash('Entraste la cuenta con exito')
+        flash('Entraste la cuenta con éxito')
 
         return redirect('/dashboard')
 
@@ -81,7 +81,7 @@ def user():
 
         user_input = request.form['menu']
         Restaurant.set_menu(user_input)
-        flash('menu edited successfully')
+        flash('Menu editado con éxito')
 
         return redirect('/dashboard')
 
@@ -195,7 +195,3 @@ def logout():
     flash('Saliste de la cuenta')
     return redirect('/')
 
-@app.route("/resetpassword", methods=['GET', 'POST'])
-def reset_password():
-    form = ResetPasswordForm()
-    return render_template('reset-password.html', form=form)

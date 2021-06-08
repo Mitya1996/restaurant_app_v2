@@ -20,7 +20,7 @@ class NewUserForm(FlaskForm):
     username = StringField("Usuario",
         validators=[InputRequired()])
     password = PasswordField("Contraseña",
-        validators=[InputRequired(), Length(min=8, message='Minimo de 8 carácteres')])
+        validators=[InputRequired(), Length(min=6, message='Minimo de 6 carácteres')])
     is_admin = RadioField("Administrador",
         choices=[(True, 'Si'), (False, 'No')],
         validators=[InputRequired()])
@@ -29,7 +29,7 @@ class NewUserForm(FlaskForm):
 class ChangeMenuForm(FlaskForm):
     """Form for menu."""
     menu = TextAreaField("Menu",
-        validators=[InputRequired(), Length(max=200, message='Maximo de 200 carácteres')])
+        validators=[InputRequired(), Length(max=250, message='Maximo de 250 carácteres')])
 
 
 class AddImageForm(FlaskForm):
