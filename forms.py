@@ -29,7 +29,7 @@ class NewUserForm(FlaskForm):
 class ChangeMenuForm(FlaskForm):
     """Form for menu."""
     menu = TextAreaField("Menu",
-        validators=[InputRequired(), Length(max=250, message='Maximo de 250 carácteres')])
+        validators=[InputRequired(), Length(max=350, message='Maximo de 350 carácteres')])
 
 
 class AddImageForm(FlaskForm):

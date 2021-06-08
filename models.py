@@ -142,9 +142,12 @@ class Restaurant():
         weekdays = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo']
         months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Deciembre']
         today = datetime.date.today()
-        weekday = weekdays[int(today.strftime('%w'))]
+        weekday = weekdays[int(today.strftime('%w')) - 1]
         day = today.strftime('%-d')
         month = months[int(today.strftime('%-m')) - 1]
         year = today.strftime('%Y')
+        print('***************')
+        print(today.strftime('%w'))
+        print('***************')
         return f'Menu de hoy: {weekday} {day} de {month} {year}'
 
