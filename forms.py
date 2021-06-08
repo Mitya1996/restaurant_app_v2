@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, PasswordField, TextAreaField, RadioField
-from wtforms.validators import InputRequired, NumberRange, Length, Email
+from wtforms.validators import InputRequired, Length
 from flask_wtf.file import FileField, FileAllowed
 
 
@@ -20,9 +20,7 @@ class NewUserForm(FlaskForm):
     username = StringField("Usuario",
         validators=[InputRequired()])
     password = PasswordField("Contraseña",
-        validators=[InputRequired()])
-    email = StringField("Correo Electronico",
-        validators=[InputRequired(), Email()])
+        validators=[InputRequired(), Length(min=8, message='Minimo de 8 carácteres')])
     is_admin = RadioField("Administrador",
         choices=[(True, 'Si'), (False, 'No')],
         validators=[InputRequired()])

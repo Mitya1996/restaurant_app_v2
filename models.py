@@ -11,30 +11,28 @@ bcrypt = Bcrypt()
 class User(UserMixin):
     """User."""
 
-    def __init__(self, username, password, email, is_admin=False, isDeletable=True):
+    def __init__(self, username, password, is_admin=False, isDeletable=True):
         self.username = username
         self.id = username #for flask-login to work
         self.password = password
-        self.email = email
         self.is_admin = is_admin 
         self.isDeletable = isDeletable
 
     @staticmethod
     def from_dict(source):
-        return User(source['username'], source['password'], source['email'], source['is_admin'], source['isDeletable'])
+        return User(source['username'], source['password'], source['is_admin'], source['isDeletable'])
 
     def to_dict(self):
         return {
             'username' : self.username,
             'password' : self.password,
-            'email' : self.email,
             'is_admin' : self.is_admin,
             'isDeletable' : self.isDeletable
         }
 
 
     @classmethod
-    def register(cls, username, password, email, is_admin):
+    def register(cls, username, password, is_admin):
         """Register user w/hashed password & return user."""
 
         hashed = bcrypt.generate_password_hash(password)
@@ -43,7 +41,7 @@ class User(UserMixin):
 
         is_admin_bool = True if is_admin == "True" else False
 
-        new_user = cls(username=username, password=hashed_utf8, email=email, is_admin=is_admin_bool)
+        new_user = cls(username=username, password=hashed_utf8, is_admin=is_admin_bool)
 
         db.collection('users').document(username).set(new_user.to_dict())
 

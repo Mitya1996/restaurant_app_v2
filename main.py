@@ -2,7 +2,7 @@ import os
 import datetime
 import requests
 
-from flask import Flask, render_template, request, redirect, flash, session, abort
+from flask import Flask, render_template, request, redirect, flash, session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 
 from models import User, Restaurant
@@ -164,9 +164,8 @@ def register():
     if form.validate_on_submit():
         username = form.username.data
         password = form.password.data
-        email = form.email.data
         is_admin = form.is_admin.data
-        User.register(username, password, email, is_admin)
+        User.register(username, password, is_admin)
         flash('Usuario creado')
         return redirect('/users')
         

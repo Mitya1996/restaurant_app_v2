@@ -19,7 +19,6 @@
       <tr>
         <th scope="col">#</th>
         <th scope="col">Usuario</th>
-        <th scope="col">Correo Electronico</th>
         <th scope="col">Admin</th>
         <th scope="col">Eliminable</th>
         <th scope="col"></th>
@@ -30,7 +29,6 @@
       <tr>
         <th scope="row">{{loop.index}}</th>
         <td>{{user.username}}</td>
-        <td>{{user.email}}</td>
         <td>{{user.is_admin}}</td>
         <td>{{user.isDeletable}}</td>
         <td>{% if user.isDeletable and user.username != current_user.username %}<a href="/{{user.username}}/delete" class="btn btn-danger mx-3">Eliminar</a>{% endif %}</td>
