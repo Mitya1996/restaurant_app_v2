@@ -5,6 +5,10 @@ from connection_gcs import storage_client
 #for uploading images
 import os, requests, uuid, datetime, re
 
+#for cropping images
+from PIL import Image
+
+
 
 GOOGLE_STORAGE_BUCKET = os.environ.get('GOOGLE_STORAGE_BUCKET', 'restaurant-app-314718-public')
 
@@ -37,13 +41,17 @@ class GCS():
         blob = bucket.blob(blob_name)
         blob.delete()
 
+    @classmethod
+    def process_image(cls, image_file):
 
-    def process_image(image_file):
-
+        #save original image
         extension = re.findall("(jpg|jpeg|png|gif|bmp)", image_file.filename)[0]
         filename = f'img-{uuid.uuid4()}.{extension}'
-        image_file.save(os.path.join(TEMP_UPLOAD_FOLDER, filename))
-        photo_url = os.path.join(TEMP_UPLOAD_FOLDER, filename)
+        image_path = os.path.join(TEMP_UPLOAD_FOLDER, filename)
+        image_file.save(image_path)
+
+        #crop to fit carousel
+        cls.crop(image_path)
 
         policy = storage_client.generate_signed_post_policy_v4(
             GOOGLE_STORAGE_BUCKET,
@@ -53,28 +61,29 @@ class GCS():
                 ["content-length-range", 0, 1000000]
             ],
         )
-        with open(photo_url, "rb") as f:
-            files = {"file": (photo_url, f)}
+        with open(image_path, "rb") as f:
+            files = {"file": (image_path, f)}
             #try this, if fails then return False
             response = requests.post(policy["url"], data=policy["fields"], files=files)
             return response
 
 
+    #methods crop, crop_center, and crop_max_square are PIL methods, not related to GCS
+    @classmethod
+    def crop(cls, image_path):
+        with Image.open(image_path) as im:
+            im_new = cls.crop_max_square(im)
+            im_new.save(image_path, quality=95)
 
+    @staticmethod
+    def crop_center(pil_img, crop_width, crop_height):
+        img_width, img_height = pil_img.size
+        return pil_img.crop(((img_width - crop_width) // 2,
+                            (img_height - crop_height) // 2,
+                            (img_width + crop_width) // 2,
+                            (img_height + crop_height) // 2))
 
-
-
-from PIL import Image, ImageDraw, ImageFilter
-
-
-def crop_center(pil_img, crop_width, crop_height):
-    img_width, img_height = pil_img.size
-    return pil_img.crop(((img_width - crop_width) // 2,
-                         (img_height - crop_height) // 2,
-                         (img_width + crop_width) // 2,
-                         (img_height + crop_height) // 2))
-
-
-def crop_max_square(pil_img):
-    return crop_center(pil_img, min(pil_img.size), min(pil_img.size))
+    @classmethod
+    def crop_max_square(cls, pil_img):
+        return cls.crop_center(pil_img, min(pil_img.size), min(pil_img.size))
 
