@@ -10,6 +10,7 @@
 <div class="bg-image">
     <div class="hero-text">
         <div id="buffet">
+            <h3 class="my-3 w-100" style="white-space: break-spaces;">{{restaurant.today}}</h3>
             <form action="/dashboard" method="POST" id="buffet-form">
                 {{ menu_form.hidden_tag() }} <!--add type=hidden form fields -->
                 {{ menu_form.menu(class_="buffet-textarea", rows=10) }}
