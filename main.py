@@ -1,31 +1,17 @@
 import os
-import datetime
-import requests
 
 from flask import Flask, render_template, request, redirect, flash, session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
+from werkzeug.wrappers import response
 
-from models import User, Restaurant
-
-from google.cloud import storage
-
-from gcs_credentials import credentials
-
-from gcs_functions import image_urls, delete_blob
-
-import uuid #for uploading images, random name
+from models_gfs import User, Restaurant
+from models_gcs import GCS
 
 from forms import LoginForm, ChangeMenuForm, NewUserForm, AddImageForm, WhatsappPhoneForm
 
 app = Flask(__name__)
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'dev')
-GOOGLE_STORAGE_BUCKET = os.environ.get('GOOGLE_STORAGE_BUCKET', 'restaurant-app-314718-public')
 
-client = storage.Client(credentials=credentials)
-
-#variable for /images route
-UPLOAD_FOLDER = './user-uploads'
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
 #flask-login stuff 
 login_manager = LoginManager()
@@ -43,7 +29,7 @@ def inject_user():
 
 @app.route('/')
 def home():
-    user_image_urls = image_urls(GOOGLE_STORAGE_BUCKET, 'user-images/img')
+    user_image_urls = GCS.image_urls()
     return render_template('index.html', user_image_urls=user_image_urls)
 
 
@@ -92,40 +78,29 @@ def user():
 @login_required
 def images():
     #used prefix of img because there is always one hidden blob in buckets, not sure why
-    blobs = client.list_blobs(GOOGLE_STORAGE_BUCKET, prefix='user-images/img')
+    blobs = GCS.user_blobs()
 
     add_image_form = AddImageForm()
     if add_image_form.validate_on_submit():
         if add_image_form.photo_file.data:
-            f = request.files['photo_file']
-            import re
-            extension = re.findall("(jpg|jpeg|png|gif|bmp)", f.filename)[0]
-            filename = f'img-{uuid.uuid4()}.{extension}'
-            f.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-            photo_url = os.path.join(app.config['UPLOAD_FOLDER'], filename)
-
-            policy = client.generate_signed_post_policy_v4(
-                GOOGLE_STORAGE_BUCKET,
-                f'user-images/{filename}',
-                expiration=datetime.timedelta(minutes=10),
-                conditions=[
-                    ["content-length-range", 0, 1000000]
-                ],
-            )
-            with open(photo_url, "rb") as f:
-                files = {"file": (photo_url, f)}
-                requests.post(policy["url"], data=policy["fields"], files=files)
-
+            image_file = request.files['photo_file']
+            response = GCS.process_image(image_file)
+            if response.ok:
+                flash('Imagen subido')
+            else:
+                flash('Imagen invalido')
             return redirect('/images')
 
 
     return render_template('images.html', blobs=blobs, add_image_form=add_image_form)
 
 
-@app.route('/<bucket_name>/user-images/<blob_name>/delete')
+@app.route('/delete')
 @login_required
-def delete(bucket_name, blob_name):
-    delete_blob(bucket_name, f'user-images/{blob_name}')
+def delete():
+    blob_name = request.args['blob-name']
+    GCS.delete_blob(blob_name)
+    flash('Imagen eliminado')
     return redirect('/images')
 
 

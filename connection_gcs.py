@@ -2,15 +2,16 @@ import json
 
 from google.oauth2 import service_account
 from google.cloud import secretmanager
+from google.cloud import storage
 
 # Create the Secret Manager client.
-client = secretmanager.SecretManagerServiceClient()
+secretmanager_client = secretmanager.SecretManagerServiceClient()
 
 # Build the resource name of the secret version.
 name = "projects/689769360983/secrets/GOOGLE_APPLICATION_CREDENTIALS/versions/1"
 
 # Access the secret version.
-response = client.access_secret_version(request={"name": name})
+response = secretmanager_client.access_secret_version(request={"name": name})
 
 # Print the secret payload.
 #
@@ -22,3 +23,6 @@ payload = response.payload.data.decode("UTF-8")
 json_acct_info = json.loads(payload)
 credentials = service_account.Credentials.from_service_account_info(
     json_acct_info)
+
+
+storage_client = storage.Client(credentials=credentials)

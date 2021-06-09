@@ -1,4 +1,6 @@
-from database import db
+#models for google firestore NoSQL database
+
+from connection_gfs import db
 import datetime
 
 from flask_login import UserMixin
