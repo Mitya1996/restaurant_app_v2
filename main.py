@@ -115,7 +115,7 @@ def edit_wa_num():
         updated_whatsapp_phone = form.whatsapp_phone.data
         Restaurant.set_whatsapp_phone(updated_whatsapp_phone)
         flash('Numero de WhatsApp actualizado')
-        return redirect('/settings')
+        return redirect('/dashboard')
 
     return render_template('edit-wa-num.html', form=form)
 
