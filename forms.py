@@ -19,7 +19,7 @@ class NewUserForm(FlaskForm):
     """Form for logging in."""
 
     username = StringField("Usuario",
-        validators=[InputRequired()])
+        validators=[InputRequired(), Length(min=3, message='Minimo de 3 carácteres')])
     password = PasswordField("Contraseña",
         validators=[InputRequired(), Length(min=6, message='Minimo de 6 carácteres')])
     is_admin = RadioField("Administrador",
