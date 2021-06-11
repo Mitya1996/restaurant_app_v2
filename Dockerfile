@@ -14,10 +14,10 @@ COPY . ./
 RUN pip3 install -r requirements.txt 
 RUN pip3 install gunicorn
 
-RUN sudo locale-gen es_co
-ENV LANG es_co
-ENV LANGUAGE es_co:es
-ENV LC_ALL es_co
+RUN sudo locale-gen es_CO.UTF-8
+ENV LANG es_CO.UTF-8
+ENV LANGUAGE es_CO.UTF-8:es
+ENV LC_ALL es_CO.UTF-8
 
 # Run the web service on container startup. Here we use the gunicorn
 # webserver, with one worker process and 8 threads.
