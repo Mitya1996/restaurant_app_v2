@@ -2,6 +2,8 @@
 # https://hub.docker.com/_/python
 FROM python:3.9-slim
 
+RUN echo $GOOGLE_APPLICATION_CREDENTIALS_JSON
+
 #https://stackoverflow.com/questions/59633558/python-based-dockerfile-throws-locale-error-unsupported-locale-setting
 RUN apt-get update && \
     apt-get install -y locales && \
@@ -23,7 +25,6 @@ RUN pip3 install -r requirements.txt
 RUN pip3 install gunicorn
 #run tests
 # RUN python3 -m unittest tests/main_test.py
-RUN ls
 
 # Run the web service on container startup. Here we use the gunicorn
 # webserver, with one worker process and 8 threads.
