@@ -154,5 +154,5 @@ class Restaurant():
         # print(today.strftime('%A %-d %B %Y'))
         # print('***************')
         # return f'Menu de hoy: {weekday} {day} de {month} {year}'
-        return today.strftime('%A %-d %B %Y').title()
+        return f"Menu de hoy: {today.strftime('%A %-d %B %Y').title()}"
 
