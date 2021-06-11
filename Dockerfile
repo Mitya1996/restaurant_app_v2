@@ -2,8 +2,12 @@
 # https://hub.docker.com/_/python
 FROM python:3.9-slim
 
-RUN apt-get update -y && apt-get install locales -y
-RUN locale-gen es_CO
+RUN apt-get update && \
+    apt-get install -y locales && \
+    sed -i -e 's/# es_CO.UTF-8 UTF-8/es_CO.UTF-8 UTF-8/' /etc/locale.gen && \
+    dpkg-reconfigure --frontend=noninteractive locales
+ENV LANG es_CO.UTF-8
+ENV LC_ALL es_CO.UTF-8
 
 # Allow statements and log messages to immediately appear in the Knative logs
 ENV PYTHONUNBUFFERED True
