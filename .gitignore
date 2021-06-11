@@ -2,3 +2,4 @@
 /__pycache__
 /user-uploads/img*
 /.vscode
+/tests/__pycache__
