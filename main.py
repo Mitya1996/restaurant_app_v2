@@ -25,6 +25,10 @@ def load_user(username):
 def inject_user():
     return dict(restaurant=Restaurant())
 
+@app.route('/testing')
+def test():
+    secret = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_JSON')
+    return secret
 
 @app.route('/')
 def home():
