@@ -2,10 +2,9 @@ import os
 
 from flask import Flask, render_template, request, redirect, flash, session
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
-from werkzeug.wrappers import response
 
-from models_gfs import User, Restaurant
-from models_gcs import GCS
+from gfs_models import User, Restaurant
+import gcs_module as GCS
 
 from forms import LoginForm, ChangeMenuForm, NewUserForm, AddImageForm, WhatsappPhoneForm
 
