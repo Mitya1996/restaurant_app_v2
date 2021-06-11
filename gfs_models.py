@@ -141,7 +141,6 @@ class Restaurant():
 
     @property
     def today(cls):
-        breakpoint()
         weekdays = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo']
         months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Deciembre']
         today = datetime.date.today()
