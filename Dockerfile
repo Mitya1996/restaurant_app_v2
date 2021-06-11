@@ -3,6 +3,7 @@
 FROM python:3.9-slim
 
 RUN apt-get update -y && apt-get install locales -y
+RUN locale-gen es_CO
 
 # Allow statements and log messages to immediately appear in the Knative logs
 ENV PYTHONUNBUFFERED True
@@ -16,10 +17,6 @@ COPY . ./
 RUN pip3 install -r requirements.txt 
 RUN pip3 install gunicorn
 
-RUN locale-gen es_CO
-ENV LANG es_CO
-ENV LANGUAGE es_CO:es
-ENV LC_ALL es_CO
 
 # Run the web service on container startup. Here we use the gunicorn
 # webserver, with one worker process and 8 threads.
