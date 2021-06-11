@@ -24,6 +24,7 @@ class Unauthenticated(TestCase):
 
     @classmethod
     def setUpClass(cls):
+        app.config['TESTING'] = True
         cls.client = app.test_client()
         #create test user
         cls.random_name = str(uuid.uuid4())
@@ -107,7 +108,7 @@ class AuthenticatedAdmin(TestCase):
     def test_dashboard(self):
         resp = self.client.get('/dashboard')
         html = resp.get_data(as_text=True)
-        self.assertEqual(resp.status_code, 404)
+        self.assertEqual(resp.status_code, 200)
         self.assertIn(self.random_name, html)
         self.assertIn('Menu', html)
 
