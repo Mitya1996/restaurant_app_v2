@@ -25,10 +25,7 @@ def load_user(username):
 def inject_user():
     return dict(restaurant=Restaurant())
 
-@app.route('/testing')
-def test():
-    secret = os.environ.get('GAC')
-    return secret
+# secret = os.environ.get('GAC')
 
 @app.route('/')
 def home():
