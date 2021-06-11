@@ -2,8 +2,6 @@
 # https://hub.docker.com/_/python
 FROM python:3.9-slim
 
-RUN echo $GOOGLE_APPLICATION_CREDENTIALS_JSON
-
 #https://stackoverflow.com/questions/59633558/python-based-dockerfile-throws-locale-error-unsupported-locale-setting
 RUN apt-get update && \
     apt-get install -y locales && \
@@ -14,6 +12,9 @@ ENV LC_ALL es_CO.UTF-8
 
 # Allow statements and log messages to immediately appear in the Knative logs
 ENV PYTHONUNBUFFERED True
+
+RUN echo $SECRET_KEY
+RUN echo $GOOGLE_APPLICATION_CREDENTIALS_JSON
 
 # Copy local code to the container image.
 ENV APP_HOME /app
