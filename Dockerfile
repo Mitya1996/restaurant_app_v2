@@ -18,8 +18,6 @@ ENV APP_HOME /app
 WORKDIR $APP_HOME
 COPY . ./
 
-RUN ls
-
 RUN pip3 install -r requirements.txt 
 # Install production dependencies.
 RUN pip3 install gunicorn

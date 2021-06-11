@@ -27,7 +27,7 @@ def inject_user():
 
 @app.route('/testing')
 def test():
-    secret = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_JSON')
+    secret = os.environ.get('GAC')
     return secret
 
 @app.route('/')
