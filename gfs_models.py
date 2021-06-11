@@ -144,7 +144,7 @@ class Restaurant():
         # weekdays = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo']
         # months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Deciembre']
         import locale
-        locale.setlocale(locale.LC_ALL, 'es_CO.UTF-8')
+        locale.setlocale(locale.LC_ALL, 'es_EC.UTF-8')
         today = datetime.date.today()
         # weekday = weekdays[int(today.strftime('%w')) - 1]
         # day = today.strftime('%-d')
@@ -154,5 +154,5 @@ class Restaurant():
         # print(today.strftime('%A %-d %B %Y'))
         # print('***************')
         # return f'Menu de hoy: {weekday} {day} de {month} {year}'
-        return f"Menu de hoy: {today.strftime('%A %-d %B %Y').title()}"
+        return f"Menu de hoy: {today.strftime('%A %-d de %B %Y').title()}"
 
