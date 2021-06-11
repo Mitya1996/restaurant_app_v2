@@ -1,7 +1,8 @@
 #models for google firestore NoSQL database
 
+from datetime import datetime
+import pytz
 import locale
-from time import strftime, localtime
 
 from flask_login import UserMixin
 
@@ -145,5 +146,7 @@ class Restaurant():
     @property
     def today(cls):
         locale.setlocale(locale.LC_ALL, 'es_CO.UTF-8')
-        return f"Menu de hoy: {strftime('%A %-d %B %Y', localtime()).title()}"
+        time_zone = pytz.timezone('America/Bogota')
+        current_time = datetime.now(tz=time_zone)
+        return f"Menu de hoy: {current_time.strftime('%A %-d %B %Y').title()}"
 

@@ -5,12 +5,10 @@ FROM python:3.9-slim
 #https://stackoverflow.com/questions/59633558/python-based-dockerfile-throws-locale-error-unsupported-locale-setting
 RUN apt-get update && \
     apt-get install -y locales && \
-    apt-get install -y timedatectl && \
     sed -i -e 's/# es_CO.UTF-8 UTF-8/es_CO.UTF-8 UTF-8/' /etc/locale.gen && \
     dpkg-reconfigure --frontend=noninteractive locales
 ENV LANG es_CO.UTF-8
 ENV LC_ALL es_CO.UTF-8
-RUN timedatectl set-timezone America/Bogota
 
 # Allow statements and log messages to immediately appear in the Knative logs
 ENV PYTHONUNBUFFERED True
