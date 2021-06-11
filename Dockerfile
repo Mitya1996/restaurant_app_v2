@@ -2,6 +2,7 @@
 # https://hub.docker.com/_/python
 FROM python:3.9-slim
 
+#https://stackoverflow.com/questions/59633558/python-based-dockerfile-throws-locale-error-unsupported-locale-setting
 RUN apt-get update && \
     apt-get install -y locales && \
     sed -i -e 's/# es_CO.UTF-8 UTF-8/es_CO.UTF-8 UTF-8/' /etc/locale.gen && \
