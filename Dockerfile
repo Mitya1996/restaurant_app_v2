@@ -9,6 +9,7 @@ RUN apt-get update && \
     dpkg-reconfigure --frontend=noninteractive locales
 ENV LANG es_CO.UTF-8
 ENV LC_ALL es_CO.UTF-8
+RUN timedatectl set-timezone America/Bogota
 
 # Allow statements and log messages to immediately appear in the Knative logs
 ENV PYTHONUNBUFFERED True
