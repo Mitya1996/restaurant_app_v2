@@ -14,7 +14,7 @@ COPY . ./
 RUN pip3 install -r requirements.txt 
 RUN pip3 install gunicorn
 
-RUN locale-gen es_co
+RUN sudo locale-gen es_co
 ENV LANG es_co
 ENV LANGUAGE es_co:es
 ENV LC_ALL es_co
