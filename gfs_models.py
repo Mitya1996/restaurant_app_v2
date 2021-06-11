@@ -141,6 +141,7 @@ class Restaurant():
 
     @property
     def today(cls):
+        breakpoint()
         weekdays = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo']
         months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Deciembre']
         today = datetime.date.today()
@@ -149,7 +150,7 @@ class Restaurant():
         month = months[int(today.strftime('%-m')) - 1]
         year = today.strftime('%Y')
         print('***************')
-        print(today.strftime('%w'))
+        print(today.strftime('%A %-d %B %Y'))
         print('***************')
         return f'Menu de hoy: {weekday} {day} de {month} {year}'
 
