@@ -22,7 +22,7 @@ COPY . ./
 RUN echo $GOOGLE_APPLICATION_CREDENTIALS_JSON > key.json
 RUN ls
 RUN cat key.json
-ENV $GOOGLE_APPLICATION_CREDENTIALS key.json
+ENV GOOGLE_APPLICATION_CREDENTIALS key.json
 
 RUN pip3 install -r requirements.txt 
 # Install production dependencies.
