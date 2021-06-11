@@ -1,14 +1,17 @@
 #models for google firestore NoSQL database
 
-from gfs_connection import db
-import datetime
+import locale
+from time import strftime, localtime
 
 from flask_login import UserMixin
 
 #for encrypting passwords
 from flask_bcrypt import Bcrypt
-bcrypt = Bcrypt()
 
+from gfs_connection import db
+
+
+bcrypt = Bcrypt()
 
 class User(UserMixin):
     """User."""
@@ -141,18 +144,6 @@ class Restaurant():
 
     @property
     def today(cls):
-        # weekdays = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo']
-        # months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Deciembre']
-        import locale
-        locale.setlocale(locale.LC_ALL, 'es_EC.UTF-8')
-        today = datetime.date.today()
-        # weekday = weekdays[int(today.strftime('%w')) - 1]
-        # day = today.strftime('%-d')
-        # month = months[int(today.strftime('%-m')) - 1]
-        # year = today.strftime('%Y')
-        # print('***************')
-        # print(today.strftime('%A %-d %B %Y'))
-        # print('***************')
-        # return f'Menu de hoy: {weekday} {day} de {month} {year}'
-        return f"Menu de hoy: {today.strftime('%A %-d de %B %Y').title()}"
+        locale.setlocale(locale.LC_ALL, 'es_CO.UTF-8')
+        return f"Menu de hoy: {strftime('%A %-d %B %Y', localtime()).title()}"
 
