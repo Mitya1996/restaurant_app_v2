@@ -141,15 +141,18 @@ class Restaurant():
 
     @property
     def today(cls):
-        weekdays = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo']
-        months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Deciembre']
+        # weekdays = ['Lunes', 'Martes', 'Miercoles', 'Jueves', 'Viernes', 'Sabado', 'Domingo']
+        # months = ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Deciembre']
+        import locale
+        locale.setlocale(6, 'es_CO')
         today = datetime.date.today()
-        weekday = weekdays[int(today.strftime('%w')) - 1]
-        day = today.strftime('%-d')
-        month = months[int(today.strftime('%-m')) - 1]
-        year = today.strftime('%Y')
-        print('***************')
-        print(today.strftime('%A %-d %B %Y'))
-        print('***************')
-        return f'Menu de hoy: {weekday} {day} de {month} {year}'
+        # weekday = weekdays[int(today.strftime('%w')) - 1]
+        # day = today.strftime('%-d')
+        # month = months[int(today.strftime('%-m')) - 1]
+        # year = today.strftime('%Y')
+        # print('***************')
+        # print(today.strftime('%A %-d %B %Y'))
+        # print('***************')
+        # return f'Menu de hoy: {weekday} {day} de {month} {year}'
+        return today.strftime('%A %-d %B %Y').title()
 
