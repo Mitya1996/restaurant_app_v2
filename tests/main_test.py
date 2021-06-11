@@ -24,7 +24,7 @@ class Unauthenticated(TestCase):
     @classmethod
     def setUpClass(cls):
         app.config['TESTING'] = True
-        cls.client = app
+        cls.client = app.test_client()
         #create test user
         cls.random_name = str(uuid.uuid4())
         cls.random_pass = str(uuid.uuid4())
