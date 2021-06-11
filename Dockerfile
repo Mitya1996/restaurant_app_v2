@@ -14,6 +14,7 @@ COPY . ./
 RUN pip3 install -r requirements.txt 
 RUN pip3 install gunicorn
 
+RUN sudo apt-get install locales -y
 RUN locale-gen es_CO
 ENV LANG es_CO
 ENV LANGUAGE es_CO:es
