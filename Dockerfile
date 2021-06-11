@@ -18,6 +18,11 @@ ENV APP_HOME /app
 WORKDIR $APP_HOME
 COPY . ./
 
+#create json file from GACJ 
+RUN echo GOOGLE_APPLICATION_CREDENTIALS_JSON > key.json
+RUN ls
+ENV GOOGLE_APPLICATION_CREDENTIALS key.json
+
 RUN pip3 install -r requirements.txt 
 # Install production dependencies.
 RUN pip3 install gunicorn
