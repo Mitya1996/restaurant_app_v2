@@ -2,10 +2,9 @@ import uuid
 import re
 from unittest import TestCase
 from main import app
-from gfs_connection import db
 from gfs_models import User, Restaurant
 
-
+#not tests
 class HelperMethods():
 
     @staticmethod
