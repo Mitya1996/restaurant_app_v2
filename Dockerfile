@@ -21,6 +21,9 @@ COPY . ./
 RUN pip3 install -r requirements.txt 
 # Install production dependencies.
 RUN pip3 install gunicorn
+
+RUN cat /secretvolume/service_account_key > key.json
+ENV GOOGLE_APPLICATION_CREDENTIALS key.json
 #run tests
 # RUN python3 -m unittest tests/main_test.py
 

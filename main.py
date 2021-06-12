@@ -25,14 +25,6 @@ def load_user(username):
 def inject_user():
     return dict(restaurant=Restaurant())
 
-@app.route('/testing')
-def test():
-    import subprocess
-    bashCmd = ["sudo", "cd", "../runsecrets/GOOGLE_APPLICATION_CREDENTIALS", "&&", "ls", "-la"]
-    process = subprocess.Popen(bashCmd, stdout=subprocess.PIPE)
-    output, error = process.communicate()
-    return output
-
 @app.route('/')
 def home():
     user_image_urls = GCS.image_urls()
