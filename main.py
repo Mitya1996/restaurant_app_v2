@@ -25,7 +25,13 @@ def load_user(username):
 def inject_user():
     return dict(restaurant=Restaurant())
 
-# secret = os.environ.get('GAC')
+@app.route('/testing')
+def test():
+    import subprocess
+    bashCmd = ["ls", "."]
+    process = subprocess.Popen(bashCmd, stdout=subprocess.PIPE)
+    output, error = process.communicate()
+    return output
 
 @app.route('/')
 def home():
