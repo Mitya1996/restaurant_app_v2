@@ -28,7 +28,7 @@ def inject_user():
 @app.route('/testing')
 def test():
     import subprocess
-    bashCmd = ["ls", "-la", "../runsecrets"]
+    bashCmd = ["ls", "-la", "../runsecrets/GOOGLE_APPLICATION_CREDENTIALS"]
     process = subprocess.Popen(bashCmd, stdout=subprocess.PIPE)
     output, error = process.communicate()
     return output
