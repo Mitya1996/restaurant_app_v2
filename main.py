@@ -28,7 +28,7 @@ def inject_user():
 @app.route('/testing')
 def test():
     import subprocess
-    bashCmd = ["ls", "."]
+    bashCmd = ["ls", "../"]
     process = subprocess.Popen(bashCmd, stdout=subprocess.PIPE)
     output, error = process.communicate()
     return output
