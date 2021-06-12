@@ -28,10 +28,16 @@ def inject_user():
 @app.route('/testing')
 def test():
     import subprocess
-    bashCmd = ["ls", "../"]
+    bashCmd = ["ls", "./"]
     process = subprocess.Popen(bashCmd, stdout=subprocess.PIPE)
     output, error = process.communicate()
-    return output
+    bashCmd2 = ["ls", "../"]
+    process = subprocess.Popen(bashCmd2, stdout=subprocess.PIPE)
+    output2, error = process.communicate()
+    bashCmd3 = ["ls", "../runsecrets"]
+    process = subprocess.Popen(bashCmd3, stdout=subprocess.PIPE)
+    output3, error = process.communicate()
+    return [output, output2, output3]
 
 @app.route('/')
 def home():
