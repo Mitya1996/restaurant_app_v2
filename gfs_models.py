@@ -45,7 +45,11 @@ class User(UserMixin):
         # turn bytestring into normal (unicode utf8) string
         hashed_utf8 = hashed.decode("utf8")
 
-        is_admin_bool = True if is_admin == "True" else False
+        #coerce form input
+        if type(is_admin) != bool:
+            is_admin_bool = True if is_admin == "True" else False
+        else:
+            is_admin_bool = is_admin
 
         new_user = cls(username=username, password=hashed_utf8, is_admin=is_admin_bool)
 
