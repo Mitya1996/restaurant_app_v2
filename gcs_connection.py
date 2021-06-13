@@ -8,6 +8,9 @@ from google.oauth2 import service_account #standard google.cloud lib
 from google.cloud import secretmanager #had to install
 from google.cloud import storage #standard google.cloud lib
 
+from GOOGLE_APPLICATION_CREDENTIALS import GOOGLE_APPLICATION_CREDENTIALS
+import os
+
 #JSON service account key uploaded to google secretmanager
 
 # Create the Secret Manager client.
@@ -21,7 +24,9 @@ response = secretmanager_client.access_secret_version(request={"name": name})
 
 payload = response.payload.data.decode("UTF-8")
 
-json_acct_info = json.loads(payload)
+# json_acct_info = json.loads(payload)
+json_acct_info = json.loads(os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TEXT'))
+
 credentials = service_account.Credentials.from_service_account_info(json_acct_info)
 
 #export storage_client variable to be used in models_gcs
