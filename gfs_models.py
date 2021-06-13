@@ -152,5 +152,5 @@ class Restaurant():
         locale.setlocale(locale.LC_ALL, 'es_CO.UTF-8')
         time_zone = pytz.timezone('America/Bogota')
         current_time = datetime.now(tz=time_zone)
-        return f"Menu de hoy: {current_time.strftime('%A %-d %B %Y').title()}"
+        return f"Menú de hoy: {current_time.strftime('%A %-d %B %Y').title()}"
 
