@@ -6,19 +6,22 @@ from firebase_admin import credentials
 from firebase_admin import firestore
 
 
-def GOOGLE_APPLICATION_CREDENTIALS():
-    GOOGLE_APPLICATION_CREDENTIALS = 'key.json'
-    #set in Cloud Run, a secret from secret manager
+def cred():
+    GOOGLE_APPLICATION_CREDENTIALS_FILENAME = 'key.json'
+    #set GOOGLE_APPLICATION_CREDENTIALS_TEXT in Cloud Run and cloudbuild.yaml to service acct key (from secret mgr)
     GOOGLE_APPLICATION_CREDENTIALS_TEXT = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TEXT')
 
-    file = open(GOOGLE_APPLICATION_CREDENTIALS, 'w')
-    file.write(GOOGLE_APPLICATION_CREDENTIALS_TEXT)
-    file.close()
-    return GOOGLE_APPLICATION_CREDENTIALS
+    #if in cloud run environment
+    if GOOGLE_APPLICATION_CREDENTIALS_TEXT:
+      file = open(GOOGLE_APPLICATION_CREDENTIALS_FILENAME, 'w')
+      file.write(GOOGLE_APPLICATION_CREDENTIALS_TEXT)
+      file.close()
+      return credentials.Certificate(GOOGLE_APPLICATION_CREDENTIALS_FILENAME)
+    #if doing local development/testing
+    return credentials.ApplicationDefault()
 
-cred = credentials.Certificate(GOOGLE_APPLICATION_CREDENTIALS())
 
-firebase_admin.initialize_app(cred, {
+firebase_admin.initialize_app(cred(), {
   'projectId': 'restaurant-app-314718',
 })
 
