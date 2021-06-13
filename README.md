@@ -5,6 +5,7 @@
 services used:  
 * google secrets manager
 * cloud run
+* cloud build
 * google cloud storage
 * google firestore NoSQL database
 * cloud dns + cloud run domain mapping
@@ -60,3 +61,4 @@ availableSecrets:
       env: GOOGLE_APPLICATION_CREDENTIALS_TEXT
 ```
 also had to allow cloud build service account the permission secret manager secret accessor
+[inspiration](https://stackoverflow.com/questions/55022058/running-python-unit-test-in-google-cloud-build)
