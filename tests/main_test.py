@@ -35,7 +35,7 @@ class Unauthenticated(TestCase):
         resp = self.client.get('/')
         html = resp.get_data(as_text=True)
         #check if status code 200
-        self.assertEqual(resp.status_code, 404)
+        self.assertEqual(resp.status_code, 200)
         self.assertIn('Menu', html)
 
     # login route
