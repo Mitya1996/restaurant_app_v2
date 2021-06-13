@@ -90,6 +90,6 @@ def crop_center(pil_img, crop_width, crop_height):
                         (img_height + crop_height) // 2))
 
 #helper method for crop() above
-def crop_max_square(cls, pil_img):
-    return cls.crop_center(pil_img, min(pil_img.size), min(pil_img.size))
+def crop_max_square(pil_img):
+    return crop_center(pil_img, min(pil_img.size), min(pil_img.size))
 
