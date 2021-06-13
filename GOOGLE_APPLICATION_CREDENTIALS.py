@@ -1,0 +1,11 @@
+import os
+
+def GOOGLE_APPLICATION_CREDENTIALS():
+    GOOGLE_APPLICATION_CREDENTIALS = 'key.json'
+    #set in Cloud Run, a secret from secret manager
+    GOOGLE_APPLICATION_CREDENTIALS_TEXT = os.environ.get('GOOGLE_APPLICATION_CREDENTIALS_TEXT')
+
+    file = open(GOOGLE_APPLICATION_CREDENTIALS, 'w')
+    file.write(GOOGLE_APPLICATION_CREDENTIALS_TEXT)
+    file.close()
+    return GOOGLE_APPLICATION_CREDENTIALS

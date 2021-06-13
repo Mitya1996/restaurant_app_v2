@@ -22,8 +22,7 @@ response = secretmanager_client.access_secret_version(request={"name": name})
 payload = response.payload.data.decode("UTF-8")
 
 json_acct_info = json.loads(payload)
-credentials = service_account.Credentials.from_service_account_info(
-    json_acct_info)
+credentials = service_account.Credentials.from_service_account_info(json_acct_info)
 
 #export storage_client variable to be used in models_gcs
 storage_client = storage.Client(credentials=credentials)
