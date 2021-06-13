@@ -16,7 +16,7 @@ import os
 # secretmanager_client = secretmanager.SecretManagerServiceClient()
 
 # Build the resource name of the secret version.
-name = "projects/689769360983/secrets/GOOGLE_APPLICATION_CREDENTIALS/versions/1"
+# name = "projects/689769360983/secrets/GOOGLE_APPLICATION_CREDENTIALS/versions/1"
 
 # Access the secret version.
 # response = secretmanager_client.access_secret_version(request={"name": name})
