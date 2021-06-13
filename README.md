@@ -2,6 +2,14 @@
 
 [saboresbogota.com](https://saboresbogota.com) (live version)
 
+## Set Up
+___
+### Fork this repository (requires you to have github account)
+[![](README_images/fork.png)](https://github.com/dj1969/restaurant-app.git/fork)
+
+### Create GCP account
+
+
 services used:  
 * google secrets manager
 * cloud run
