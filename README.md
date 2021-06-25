@@ -2,6 +2,27 @@
 
 [saboresbogota.com](https://saboresbogota.com) (production version)
 
+![](README_images/app0.png)
+![](README_images/app0.1.png)
+![](README_images/app0.2.png)
+![](README_images/app1.png)
+![](README_images/app2.png)
+![](README_images/app3.png)
+![](README_images/app4.png)
+![](README_images/app5.png)
+
+## Features
+* 50+ daily users
+* Responsive mobile first design
+* Extremely high performance and low latency
+* Infinitely auto-scalable infrastructure with zero overhead (Cloud Run by default handles up to 80,000 concurrent requests)
+* $1/month total cost (provided the use of GCP resources does not exceed their extremely high free quota thresholds)  
+  [Cloud Run free quota](https://cloud.google.com/run/pricing)  
+  [Firestore free quota](https://firebase.google.com/docs/firestore/quotas#free-quota)  
+  [Cloud Storage free quota](https://cloud.google.com/storage/pricing#cloud-storage-always-free)  
+  [Cloud Build free quota](https://cloud.google.com/build/pricing)  
+  [Cloud DNS quota](https://cloud.google.com/dns/pricing)  
+  Cost breakdown: lowest common denominator here is Cloud Run so the app will have to recieve an estimated 360,000 requests/month to the home page before incurring any cost. This is calculated by taking the approximate request time (500ms) to hit the homepage route and multiplying by the free quota threshold (180,000 vCPU-seconds free per month). CPU consumption is the lowest common denominator since memory consumption per request is much lower. The $1/month is the cost of the domain.
 ## How to use the app
 The top right corner contains a hidden login button for administration of the restaurant
 
@@ -83,3 +104,4 @@ also had to allow cloud build service account the permission secret manager secr
 
 ## Local testing
 Local development testing is still possible by running `python3 -m unittest` command locally or via the VScode UI
+

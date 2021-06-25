@@ -3,3 +3,4 @@
 Dockerfile
 /tests/__pycache__
 /.vscode
+/README_images
