@@ -1,35 +1,39 @@
 # Restaurant App
 
-[saboresbogota.com](https://saboresbogota.com) (live version)
+[saboresbogota.com](https://saboresbogota.com) (production version)
 
-## Set Up
-___
-### Fork this repository (requires you to have github account)
-[![](README_images/fork.png)](https://github.com/dj1969/restaurant-app.git/fork)
+## How to use the app
+The top right corner contains a hidden login button for administration of the restaurant
 
-### Create GCP account
+## Database Schema
+![](/README_images/dbschema.png)
+## Google firestore UI screenshot
+![](/README_images/firestore.png)
 
-
-services used:  
-* google secrets manager
+## Services used:  
 * cloud run
 * cloud build
+* google secrets manager
 * google cloud storage
 * google firestore NoSQL database
 * cloud dns + cloud run domain mapping
   
-configurations required: 
-* create service account for cloud run service that has the Secret Manager Secret Accessor permission
-* download json key file for above service account and upload it to secrets manager, copy secret path and either set as another environment variable or (how I have it currently) hard code it; this has to be passed into the secretmanager library (has to be installed/not part of the google.cloud standard library) and then passed into the credentials parameter when initializing the storage_client library
-* set environment variables in cloud run SECRET_KEY, GOOGLE_STORAGE_BUCKET; SECRET_KEY is needed for flask session to work
-* create storage bucket manually with two folders, /static and /user-images, set bucket to be publically accessible
-* under cloud domains, make sure to check "Use Cloud DNS (Recommended)" for the domain; when configuring record sets in cloud dns, leave DNS Name field blank and put all 4 ip addresses in the A record set, ditto for AAAA
-* set up continous deployment on cloud run
+## GCP configurations required: 
+* deploy your fork of this repository on cloud run, use https://gcping.com/ to choose lowest latency region to deploy to
+ ![](/README_images/run.png)
+* [create service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts) for the application that has 'project owner' permission (this is like super admin)
+* [download json key file](https://cloud.google.com/iam/docs/creating-managing-service-account-keys) for above service account and upload it to Secret Manager
+  ![](README_images/secretmanager.png)
+* [reference above secret as an environment variable in Cloud Run](https://cloud.google.com/run/docs/configuring/environment-variables), make sure to name the environment variable GOOGLE_APPLICATION_CREDENTIALS_TEXT ![](/README_images/secre1.gif)
+* Enable Firestore in native mode, select same region as cloud run, and create database
+  ![](/README_images/firestore1.png)
+* [create Cloud Storage bucket](https://cloud.google.com/storage/docs/creating-buckets#storage-create-bucket-console) manually with two folders, /static and /user-images, set bucket to be publically accessible
+  ![](/README_images/storage1.png)
+* Upload all images from /static/assets in source code into assets/ directory of the newly created bucket above, change `src` attribute of all affected `<img>` tags in all .html files in source code to the public url of your own version of assets you just uploaded
+* set environment variables in cloud run SECRET_KEY to a random string, set GOOGLE_STORAGE_BUCKET to the name of the bucket created above; note: SECRET_KEY is needed for flask session to work
+* For [domain mapping](https://cloud.google.com/run/docs/mapping-custom-domains) to work, a bug that I personally encountered at time of setup was having to: under cloud domains, make sure to check "Use Cloud DNS (Recommended)" for the domain; when configuring record sets in cloud dns, leave DNS Name field blank and put all 4 ip addresses in the A record set, ditto for AAAA
 
-challenges:  
-* recreating models.py file with firestore, thankfully firestore documentation for adding [custom objects](https://firebase.google.com/docs/firestore/manage-data/add-data) which helps in creating object oriented models similar to sqlalchemy workflow 
-* still not 100% how flask-login works, but was able to get it to work by passing a user object that inherits the UserMixin class into login_user() and creating a staticmethod get() that's based on username to use in the @user_loader decorator/route (as per docs)
-
+## Local development configuration required
 
 local development environment variables (added to bottom of .bashrc file):
 ```
@@ -38,15 +42,21 @@ export FLASK_APP=main.py
 export GOOGLE_APPLICATION_CREDENTIALS=key.json
 ```
 
-requires download of service key json file, naming it key.json, and putting into root of application (so that when developing/testing locally the services are all authenticated), do not forget to add key.json to .gitignore
+requires download of service key json file, naming it <<key.json>>, and putting into root of application (so that when developing/testing locally the services are all authenticated), DO NOT FORGET to add key.json to .gitignore 
 
-To implement a 'Test' step in the CI/CD pipeline, as seen below:
+## Testing
+
+An low effort CI/CD pipeline is possible through Cloud Build, which is used when you set up Cloud Run anyway. A github trigger starts the build steps (pushing to main). Then:
+1. A container image is built based on the dockerfile in the root of application source code
+2. The image is pushed to GCR, google container registry
+3. A Test step is manually implemented that takes the freshly built image, runs the `python -m unittest -s ./tests/ -p *_test.py` command to run all tests (that were commited to the tests directory and correctly named).
+4. If a test does not pass, it breaks the build process and does not begin Deploy step. However if all is good, then the new revision is deployed and 100% of traffic is routed to the new revision. 
 
 ![alt text](/README_images/cloudbuild.png)
 
-Unless all tests pass, the new revision does not deploy.
+Unless all tests pass, the a new revision of the app does not deploy!!! Very cool.
 
-Had to add the following to the Cloud Build Trigger cloudbuild.yaml file:
+To create Test step, have to manually add the following to the Cloud Build Trigger cloudbuild.yaml file:
 ```
 steps:
   - name: '$_GCR_HOSTNAME/$PROJECT_ID/$REPO_NAME/$_SERVICE_NAME:$COMMIT_SHA'
@@ -56,9 +66,9 @@ steps:
       - unittest
       - discover
       - '--verbose'
-      - '-s'
+      - '--start-directory'
       - ./tests/
-      - '-p'
+      - '--pattern'
       - '*_test.py'
     id: Test
     secretEnv:
@@ -68,5 +78,8 @@ availableSecrets:
     - versionName: projects/689769360983/secrets/service_account_key/versions/1
       env: GOOGLE_APPLICATION_CREDENTIALS_TEXT
 ```
-also had to allow cloud build service account the permission secret manager secret accessor
-[inspiration](https://stackoverflow.com/questions/55022058/running-python-unit-test-in-google-cloud-build)
+also had to allow cloud build service account the permission secret manager secret accessor  
+[inspiration/reference](https://stackoverflow.com/questions/55022058/running-python-unit-test-in-google-cloud-build)
+
+## Local testing
+Local development testing is still possible by running `python3 -m unittest` command locally or via the VScode UI
